@@ -1,0 +1,11 @@
+### Put request to update new patient
+PUT http://localhost:4000/patients/a705519c-731c-4e26-8bf6-49ea9860d2b7
+Content-Type: application/json
+
+{
+  "name": "keshav krishn",
+  "address": "147 beaker street",
+  "dateOfBirth": "1999-06-10"
+}
+
+###

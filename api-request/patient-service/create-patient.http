@@ -1,0 +1,13 @@
+### POSt request to create new patient
+POST http://localhost:4000/patients
+Content-Type: application/json
+
+{
+  "name": "keshav krishn",
+  "email": "keshavkrishn@gmail.com",
+  "address": "147 beaker street",
+  "dateOfBirth": "1999-06-10",
+  "registeredDate": "2025-07-15"
+}
+
+###
