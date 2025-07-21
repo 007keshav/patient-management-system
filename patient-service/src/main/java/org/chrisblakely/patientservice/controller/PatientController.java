@@ -4,7 +4,6 @@ package org.chrisblakely.patientservice.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import jakarta.validation.groups.Default;
 import org.chrisblakely.patientservice.dto.PatientRequestDTO;
 import org.chrisblakely.patientservice.dto.PatientResponseDTO;
@@ -29,7 +28,7 @@ public class PatientController {
 
 
     @GetMapping
-    @Operation(summary = "Get Patients")
+    @Operation(summary = "Get Patients details")
     public ResponseEntity<List<PatientResponseDTO>> getPatients() {
         List<PatientResponseDTO> patients = patientService.getPatients();
         return ResponseEntity.ok().body(patients);
