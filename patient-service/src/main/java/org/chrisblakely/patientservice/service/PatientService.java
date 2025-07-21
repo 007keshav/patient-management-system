@@ -1,9 +1,12 @@
 package org.chrisblakely.patientservice.service;
 
+import com.google.api.Billing;
 import org.chrisblakely.patientservice.dto.PatientRequestDTO;
 import org.chrisblakely.patientservice.dto.PatientResponseDTO;
 import org.chrisblakely.patientservice.exception.EmailAlreadyExitsException;
 import org.chrisblakely.patientservice.exception.PatientNotFoundException;
+import org.chrisblakely.patientservice.grpc.BillingServiceGrpcClient;
+import org.chrisblakely.patientservice.kafka.KafkaProducer;
 import org.chrisblakely.patientservice.mapper.PatientMapper;
 import org.chrisblakely.patientservice.model.Patient;
 import org.chrisblakely.patientservice.repository.PatientRepository;
@@ -17,8 +20,20 @@ import java.util.UUID;
 @Service
 public class PatientService {
 
-    @Autowired
-    private PatientRepository patientRepository;
+
+    private  final PatientRepository patientRepository;
+
+    private  final BillingServiceGrpcClient billingServiceGrpcClient;
+
+    private final KafkaProducer kafkaProducer;
+
+    public PatientService(PatientRepository patientRepository,
+                          BillingServiceGrpcClient billingServiceGrpcClient,
+                          KafkaProducer kafkaProducer) {
+        this.patientRepository = patientRepository;
+        this.billingServiceGrpcClient = billingServiceGrpcClient;
+        this.kafkaProducer = kafkaProducer;
+    }
 
     public List<PatientResponseDTO> getPatients(){
         List<Patient> patients = patientRepository.findAll();
@@ -34,6 +49,12 @@ public class PatientService {
         }
 
         Patient newPatient = patientRepository.save(PatientMapper.toModel(patientRequestDTO));
+
+        billingServiceGrpcClient.createBillingAccount(newPatient.getId().toString(), newPatient.getName(),newPatient.getEmail());
+
+        kafkaProducer.sendEvent(newPatient);
+
+
         return PatientMapper.toDTO(newPatient);
     }
 
